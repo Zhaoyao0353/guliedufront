@@ -63,7 +63,7 @@
 
       <!-- 课程简介 TODO -->
       <el-form-item label="课程简介">
-        <el-input v-model="courseInfo.description" placeholder=" " />
+        <tinymce :height="300" v-model="courseInfo.description"/>
       </el-form-item>
 
       <!-- 课程封面 TODO -->
@@ -98,7 +98,12 @@
 <script>
 import course from '@/api/edu/course'
 import subject from '@/api/edu/subject'
+// eslint-disable-next-line no-unused-vars
+import Tinymce from '@/components/Tinymce'
 export default {
+  components: {
+    Tinymce
+  },
   data() {
     return {
       saveBtnDisabled: false,
@@ -109,7 +114,7 @@ export default {
         teacherId: '',
         lessonNum: 0,
         description: '',
-        cover: '/static/01.jpg',
+        cover: '/static/02.jpg',
         price: 0
       },
       BASE_API: process.env.BASE_API, // 接口API地址
