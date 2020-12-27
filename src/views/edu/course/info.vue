@@ -98,8 +98,7 @@
 <script>
 import course from '@/api/edu/course'
 import subject from '@/api/edu/subject'
-// eslint-disable-next-line no-unused-vars
-import Tinymce from '@/components/Tinymce'
+import Tinymce from '@/components/Tinymce' // 引入组件
 export default {
   components: {
     Tinymce
@@ -191,3 +190,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.tinymce-container {
+  line-height: 29px;
+}
+</style>
