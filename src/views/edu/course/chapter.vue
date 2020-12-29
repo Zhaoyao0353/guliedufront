@@ -1,13 +1,17 @@
 <template>
+
   <div class="app-container">
+
     <h2 style="text-align: center;">发布新课程</h2>
 
     <el-steps :active="2" process-status="wait" align-center style="margin-bottom: 40px;">
-      <el-step title="填写课程基本信息" />
-      <el-step title="创建课程大纲" />
-      <el-step title="最终发布" />
+      <el-step title="填写课程基本信息"/>
+      <el-step title="创建课程大纲"/>
+      <el-step title="最终发布"/>
     </el-steps>
+
     <el-button type="text" @click="openChapterDialog()">添加章节</el-button>
+
     <!-- 章节 -->
     <ul class="chanpterList">
       <li
@@ -40,7 +44,6 @@
         </ul>
       </li>
     </ul>
-
     <div>
       <el-button @click="previous">上一步</el-button>
       <el-button :disabled="saveBtnDisabled" type="primary" @click="next">下一步</el-button>
@@ -77,9 +80,29 @@
             <el-radio :label="false">默认</el-radio>
           </el-radio-group>
         </el-form-item>
+
         <el-form-item label="上传视频">
-          <!-- TODO -->
+          <el-upload
+            :on-success="handleVodUploadSuccess"
+            :on-remove="handleVodRemove"
+            :before-remove="beforeVodRemove"
+            :on-exceed="handleUploadExceed"
+            :file-list="fileList"
+            :action="BASE_API+'/eduvod/video/uploadAlyiVideo'"
+            :limit="1"
+            class="upload-demo">
+            <el-button size="small" type="primary">上传视频</el-button>
+            <el-tooltip placement="right-end">
+              <div slot="content">最大支持1G，<br>
+                支持3GP、ASF、AVI、DAT、DV、FLV、F4V、<br>
+                GIF、M2T、M4V、MJ2、MJPEG、MKV、MOV、MP4、<br>
+                MPE、MPG、MPEG、MTS、OGG、QT、RM、RMVB、<br>
+                SWF、TS、VOB、WMV、WEBM 等视频格式上传</div>
+              <i class="el-icon-question"/>
+            </el-tooltip>
+          </el-upload>
         </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVideoFormVisible = false">取 消</el-button>
@@ -92,6 +115,7 @@
 <script>
 import chapter from '@/api/edu/chapter'
 import video from '@/api/edu/video'
+
 export default {
   data() {
     return {
@@ -106,22 +130,35 @@ export default {
         title: '',
         sort: 0,
         free: 0,
-        videoSourceId: ''
+        videoSourceId: '',
+        videoOriginalName: ''// 视频名称
       },
       dialogChapterFormVisible: false, // 章节弹框
-      dialogVideoFormVisible: false // 小节弹框
+      dialogVideoFormVisible: false, // 小节弹框
 
+      fileList: [], // 上传文件列表
+      BASE_API: process.env.BASE_API // 接口API地址
     }
   },
   created() {
-    // 获取路由id的值
-    if (this.$router.params && this.$router.params.id) {
-      this.courseId = this.$$router.params.id
-      // 根据id查查询章节
+    // 获取路由的id值
+    if (this.$route.params && this.$route.params.id) {
+      this.courseId = this.$route.params.id
+      // 根据课程id查询章节和小节
       this.getChapterVideo()
     }
   },
   methods: {
+    // 上传视频成功调用的方法
+    handleVodUploadSuccess(response, file, fileList) {
+      // 上传视频id赋值
+      this.video.videoSourceId = response.data.videoId
+      // 上传视频名称赋值
+      this.video.videoOriginalName = file.name
+    },
+    handleUploadExceed() {
+      this.$message.warning('想要重新上传视频，请先删除已上传的视频')
+    },
     // ==============================小节操作====================================
     // 删除小节
     removeVideo(id) {
